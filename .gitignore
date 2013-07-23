@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+#Exclude temporary stuff
+UMLEdit/Debug
+UMLEdit/Release
+UMLEdit/ipch
