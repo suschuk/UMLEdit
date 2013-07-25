@@ -1,2 +1,5 @@
 #include "windows.h"
+#include "windowsx.h"
 #include "tchar.h"
+#include "string"
+#include "sstream"

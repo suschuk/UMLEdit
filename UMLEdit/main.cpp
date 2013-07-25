@@ -1,18 +1,13 @@
 #include "stdafx.h"
 
-// Global variables
-
-// The main window class name.
-static TCHAR szWindowClass[] = _T("win32app");
-// The string that appears in the application's title bar.
-static TCHAR szTitle[] = _T("Win32 Guided Tour Application");
+static TCHAR szWindowClass[] = _T("UMLEditMainWnd");
+static TCHAR szTitle[] = _T("UMLEdit");
 
 HINSTANCE hInst;
 
-// Forward declarations of functions included in this code module:
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
     WNDCLASSEX wcex = {0};
 
@@ -35,29 +30,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         return 1;
     }
 
-    hInst = hInstance; // Store instance handle in our global variable
-
-    // The parameters to CreateWindow explained:
-    // szWindowClass: the name of the application
-    // szTitle: the text that appears in the title bar
-    // WS_OVERLAPPEDWINDOW: the type of window to create
-    // CW_USEDEFAULT, CW_USEDEFAULT: initial position (x, y)
-    // 500, 100: initial size (width, length)
-    // NULL: the parent of this window
-    // NULL: this application does not have a menu bar
-    // hInstance: the first parameter from WinMain
-    // NULL: not used in this application
-    HWND hWnd = CreateWindow(
-        szWindowClass,
-        szTitle,
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        500, 100,
-        NULL,
-        NULL,
-        hInstance,
-        NULL
-    );
+    hInst = hInstance; 
+    HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+        500, 500, NULL, NULL, hInstance, NULL);
 
     if (!hWnd)
     {
@@ -65,9 +40,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         return 1;
     }
 
-    // The parameters to ShowWindow explained:
-    // hWnd: the value returned from CreateWindow
-    // nCmdShow: the fourth parameter from WinMain
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
 
@@ -85,31 +57,24 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
-//  PURPOSE:  Processes messages for the main window.
+//  PURPOSE:  Show message crackersfrom windowsx.h
 //
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY  - post a quit message and return
-//
-//
+
+void OnPaint(HWND);
+void OnMouseMove(HWND, int, int, UINT);
+void OnLButtonDown(HWND, BOOL, int, int, UINT);
+void OnRButtonUp(HWND, int, int, UINT);
+void OnDestroy(HWND);
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    PAINTSTRUCT ps = {0};
-    HDC hdc = 0;
-    TCHAR greeting[] = _T("Hello, World!");
-
     switch (message)
     {
-    case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);
-        // Here your application is laid out.
-        // For this introduction, we just print out "Hello, World!" in the top left corner.
-        TextOut(hdc, 5, 5, greeting, _tcslen(greeting));
-        // End application-specific layout section.
-        EndPaint(hWnd, &ps);
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
+        HANDLE_MSG(hWnd, WM_PAINT, OnPaint);
+        HANDLE_MSG(hWnd, WM_MOUSEMOVE, OnMouseMove);
+        HANDLE_MSG(hWnd, WM_LBUTTONDOWN, OnLButtonDown);
+        HANDLE_MSG(hWnd, WM_RBUTTONUP, OnRButtonUp);
+        HANDLE_MSG(hWnd, WM_DESTROY, OnDestroy);
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
         break;
@@ -117,3 +82,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     return 0;
 }
+
+void OnPaint(HWND hWnd)
+{
+    PAINTSTRUCT ps = {0};
+    HDC hDC;
+    TCHAR greeting[] = _T("Hello, World!");
+    hDC=BeginPaint(hWnd, &ps);
+    TextOut(hDC, 5, 5, greeting, _tcslen(greeting));
+    EndPaint(hWnd, &ps);
+}
+void OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags)
+{
+    HDC hdc = GetDC(hWnd); 
+    SetPixel(hdc, x, y, RGB(255,0,0)); 
+    ReleaseDC(hWnd, hdc);
+}
+
+void OnLButtonDown(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+    std::wstringstream oss;
+    oss << "Left mouse click detected: x = " << x << ", y = " << y << std::endl;
+    MessageBox(hWnd, oss.str().c_str(), _T("Attention"), MB_OK);
+}
+
+void OnRButtonUp(HWND hWnd, int x, int y, UINT keyFlags)
+{
+    std::wstringstream oss;
+    oss << "Right mouse button released: x = " << x << ", y = " << y << std::endl;
+    MessageBox(hWnd, oss.str().c_str(), _T("Attention"), MB_OK);
+}
+void OnDestroy(HWND hWnd)
+{
+    PostQuitMessage(0);
+}
+
+
+
+
