@@ -1,0 +1,7 @@
+#Exclude temporary stuff
+
+./*/_UpgradeReport_Files
+./*/Debug
+./*/Release
+./*/ipch
+./*/*.sdf
